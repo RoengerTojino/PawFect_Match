@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Repositories\" />
     <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
   </ItemGroup>
 
 </Project>
