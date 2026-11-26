@@ -1,4 +1,6 @@
 ﻿
+using PawFect_Match.Models;
+using PawFect_Match.Repositories;
 using System;
 using System.Security.Cryptography;
 
@@ -126,5 +128,35 @@ namespace PawFect_Match.Services
 
             return true;
         }
+
+
+        public UserAccount Login(string username, string password)
+        {
+            UserRepository userRepository = new UserRepository();
+
+            UserAccount user = userRepository.GetUserByUsername(username);
+
+            // Check if the account exists
+            if (user == null)
+            {
+                return null;
+            }
+
+            // Check if the account is active
+            if (!user.IsActive)
+            {
+                return null;
+            }
+
+            // Verify the password
+            if (!VerifyPassword(password, user.PasswordHash))
+            {
+                return null;
+            }
+
+            // Login successful
+            return user;
+        }
+
     }
 }

@@ -109,5 +109,90 @@ namespace PawFect_Match.Repositories
                 }
             }
         }
+
+
+        public int AddUser(UserAccount user)
+        {
+            using (SqlConnection connection = DatabaseConnection.GetConnection())
+            {
+                connection.Open();
+
+                string query = @"
+            INSERT INTO tbl_Users
+            (Username, Email, PasswordHash, Role, IsActive, CreatedAt)
+            VALUES
+            (@Username, @Email, @PasswordHash, @Role, @IsActive, @CreatedAt);
+
+            SELECT SCOPE_IDENTITY();";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.Add("@Username", SqlDbType.NVarChar, 50)
+                        .Value = user.Username;
+
+                    command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
+                        .Value = user.Email;
+
+                    command.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, 300)
+                        .Value = user.PasswordHash;
+
+                    command.Parameters.Add("@Role", SqlDbType.NVarChar, 20)
+                        .Value = user.Role.ToString();
+
+                    command.Parameters.Add("@IsActive", SqlDbType.Bit)
+                        .Value = user.IsActive;
+
+                    command.Parameters.Add("@CreatedAt", SqlDbType.DateTime2)
+                        .Value = user.CreatedAt;
+
+                    int userID = System.Convert.ToInt32(command.ExecuteScalar());
+
+                    user.UserID = userID;
+
+                    return userID;
+                }
+            }
+        }
+
+
+        public int AddUser(UserAccount user, SqlConnection connection, SqlTransaction transaction)
+        {
+            string query = @"
+        INSERT INTO tbl_Users
+        (Username, Email, PasswordHash, Role, IsActive, CreatedAt)
+        VALUES
+        (@Username, @Email, @PasswordHash, @Role, @IsActive, @CreatedAt);
+
+        SELECT SCOPE_IDENTITY();";
+
+            using (SqlCommand command = new SqlCommand(query, connection, transaction))
+            {
+                command.Parameters.Add("@Username", SqlDbType.NVarChar, 50)
+                    .Value = user.Username;
+
+                command.Parameters.Add("@Email", SqlDbType.NVarChar, 150)
+                    .Value = user.Email;
+
+                command.Parameters.Add("@PasswordHash", SqlDbType.NVarChar, 300)
+                    .Value = user.PasswordHash;
+
+                command.Parameters.Add("@Role", SqlDbType.NVarChar, 20)
+                    .Value = user.Role.ToString();
+
+                command.Parameters.Add("@IsActive", SqlDbType.Bit)
+                    .Value = user.IsActive;
+
+                command.Parameters.Add("@CreatedAt", SqlDbType.DateTime2)
+                    .Value = user.CreatedAt;
+
+                int userID = Convert.ToInt32(command.ExecuteScalar());
+
+                user.UserID = userID;
+
+                return userID;
+            }
+        }
+
+
     }
 }
